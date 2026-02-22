@@ -114,7 +114,7 @@ export class SessionService {
             const msg = JSON.parse(line);
             // 检查是否有 cwd 字段可以用来推断项目路径
             if (msg.cwd) {
-              // cwd 格式: /Users/huangshilei/Documents/pythonprojects/claude-session-dashboard
+              // cwd 格式: /Users/username/Documents/pythonprojects/project-name
               return msg.cwd;
             }
           } catch {
@@ -127,8 +127,8 @@ export class SessionService {
     }
 
     // 回退：从 projectDir 构建路径
-    // -Users-huangshilei-Documents-pythonprojects-claude-session-dashboard
-    // -> /Users/huangshilei/Documents/pythonprojects/claude-session-dashboard
+    // -Users-username-Documents-pythonprojects-project-name
+    // -> /Users/username/Documents/pythonprojects/project-name
     if (projectDir.startsWith('-')) {
       const parts = projectDir.slice(1).split('-');
       const idx = parts.findIndex(p => p === 'pythonprojects' || p === 'Documents');
@@ -172,7 +172,7 @@ export class SessionService {
 
   /**
    * 根据项目路径获取会话列表
-   * @param projectPath - Claude 项目目录名（如 -Users-huangshilei-Documents-pythonprojects-aihub）或完整路径
+   * @param projectPath - Claude 项目目录名（如 -Users-username-Documents-pythonprojects-project-name）或完整路径
    */
   async getSessionsByProject(projectPath: string): Promise<SessionIndexEntry[]> {
     const allSessions = await this.getAllSessions();
@@ -182,7 +182,7 @@ export class SessionService {
       if (s.projectPath === projectPath) return true;
 
       // 从 fullPath 中提取 Claude 项目目录名进行匹配
-      // fullPath 格式: /Users/huangshilei/.claude/projects/-Users-huangshilei-Documents-pythonprojects-aihub/xxx.jsonl
+      // fullPath 格式: /Users/username/.claude/projects/-Users-username-Documents-pythonprojects-project-name/xxx.jsonl
       const claudeProjectDir = s.fullPath.split('/.claude/projects/')[1]?.split('/')[0];
       if (claudeProjectDir === projectPath) return true;
 
