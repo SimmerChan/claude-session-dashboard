@@ -29,22 +29,24 @@ const api = axios.create({
 export const sessionsApi = {
   // 获取所有会话
   getAll: async (): Promise<SessionIndexEntry[]> => {
-    const { data } = await api.get<{ sessions: SessionIndexEntry[] }>('/sessions');
-    return data.sessions;
+    const { data } = await api.get<{ data: SessionIndexEntry[]; pagination: any }>('/sessions', {
+      params: { pageSize: -1 }, // 获取所有数据
+    });
+    return data.data;
   },
 
   // 获取会话详情
   getById: async (id: string): Promise<SessionMessage[]> => {
-    const { data } = await api.get<{ messages: SessionMessage[] }>(`/sessions/${id}`);
-    return data.messages;
+    const { data } = await api.get<SessionMessage[]>(`/sessions/${id}`);
+    return data;
   },
 
   // 根据项目获取会话
   getByProject: async (projectPath: string): Promise<SessionIndexEntry[]> => {
-    const { data } = await api.get<{ sessions: SessionIndexEntry[] }>('/sessions', {
-      params: { project: projectPath },
+    const { data } = await api.get<{ data: SessionIndexEntry[]; pagination: any }>('/sessions', {
+      params: { projectPath },
     });
-    return data.sessions;
+    return data.data;
   },
 };
 
@@ -69,8 +71,8 @@ export const searchApi = {
 export const projectsApi = {
   // 获取所有项目
   getAll: async (): Promise<string[]> => {
-    const { data } = await api.get<{ projects: string[] }>('/projects');
-    return data.projects;
+    const { data } = await api.get<string[]>('/projects');
+    return data;
   },
 };
 

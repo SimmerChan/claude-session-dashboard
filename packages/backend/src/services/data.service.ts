@@ -45,7 +45,39 @@ export class DataService {
     try {
       const content = await fs.readFile(filePath, 'utf-8');
       const lines = content.trim().split('\n');
-      return lines.map(line => JSON.parse(line) as T);
+      const messages = lines.map(line => {
+        const parsed = JSON.parse(line);
+        // 如果消息有 message.content 数组，提取文本内容
+        if (parsed.message && Array.isArray(parsed.message.content)) {
+          const textParts: string[] = [];
+
+          for (const item of parsed.message.content) {
+            if (typeof item !== 'object' || item === null) continue;
+
+            if (item.type === 'text' && item.text) {
+              textParts.push(item.text);
+            } else if (item.type === 'thinking' && item.thinking) {
+              // 标记思考内容
+              textParts.push(`[思考] ${item.thinking.substring(0, 200)}...`);
+            } else if (item.type === 'tool_use' && item.name) {
+              // 显示工具调用
+              const input = item.input ? JSON.stringify(item.input).substring(0, 100) : '';
+              textParts.push(`[工具调用] ${item.name}${input ? ': ' + input + '...' : ''}`);
+            }
+          }
+
+          parsed.content = textParts.join('\n');
+
+          // 如果完全没内容，保存原始数据用于调试
+          if (textParts.length === 0) {
+            parsed._hasContent = false;
+          } else {
+            parsed._hasContent = true;
+          }
+        }
+        return parsed as T;
+      });
+      return messages;
     } catch (error) {
       return [];
     }

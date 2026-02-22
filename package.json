@@ -5,7 +5,9 @@
   "description": "Claude Code 本地 session dashboard",
   "license": "Apache-2.0",
   "scripts": {
-    "dev": "pnpm --filter backend dev && pnpm --filter frontend dev",
+    "dev": "pnpm --filter backend dev & pnpm --filter frontend dev",
+    "dev:backend": "pnpm --filter backend dev",
+    "dev:frontend": "pnpm --filter frontend dev",
     "build": "pnpm run build:frontend && pnpm run build:backend",
     "build:frontend": "pnpm --filter frontend build",
     "build:backend": "pnpm --filter backend build",

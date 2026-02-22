@@ -29,9 +29,6 @@ app.use(cors());
 app.use(compression());
 app.use(express.json());
 
-// 静态文件服务（前端构建产物）
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
-
 // API 路由
 app.use('/api/sessions', sessionRoutes);
 app.use('/api/search', searchRoutes);
@@ -42,10 +39,14 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// SPA fallback
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
-});
+// 生产环境：静态文件服务和 SPA fallback
+if (process.env.NODE_ENV !== 'development') {
+  const frontendDist = path.join(__dirname, '../../frontend/dist');
+  app.use(express.static(frontendDist));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

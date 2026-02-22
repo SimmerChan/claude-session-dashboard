@@ -24,7 +24,7 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
-    const pageSize = parseInt(req.query.pageSize as string) || 20;
+    const pageSizeParam = req.query.pageSize as string | undefined;
     const projectPath = req.query.projectPath as string | undefined;
 
     let sessions = await sessionService.getAllSessions();
@@ -34,9 +34,16 @@ router.get('/', async (req, res) => {
       sessions = sessions.filter(s => s.projectPath === projectPath);
     }
 
+    // pageSize=-1 或 'all' 表示获取所有数据
+    const pageSize = pageSizeParam === '-1' || pageSizeParam === 'all'
+      ? sessions.length
+      : parseInt(pageSizeParam || '20', 10);
+
     const total = sessions.length;
     const start = (page - 1) * pageSize;
-    const data = sessions.slice(start, start + pageSize);
+    const data = pageSizeParam === '-1' || pageSizeParam === 'all'
+      ? sessions
+      : sessions.slice(start, start + pageSize);
 
     res.json({
       data,
@@ -60,6 +67,19 @@ router.get('/:id', async (req, res) => {
     res.json(session);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch session' });
+  }
+});
+
+/**
+ * POST /api/sessions/clear-cache
+ * 清空缓存
+ */
+router.post('/clear-cache', (_req, res) => {
+  try {
+    sessionService.clearCache();
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to clear cache' });
   }
 });
 

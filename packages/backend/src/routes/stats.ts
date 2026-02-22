@@ -26,22 +26,41 @@ router.get('/', async (req, res) => {
   try {
     const projects = await dataService.listProjects();
     const sessions = await sessionService.getAllSessions();
+    const path = await import('path');
 
-    // 计算统计信息
+    // 只为有 sessions-index.json 的项目获取统计信息
+    const projectStatsPromises = projects.map(async (projectDir) => {
+      const indexPath = path.join(dataService.getClaudeDir(), 'projects', projectDir, 'sessions-index.json');
+      const index = await dataService.readJson<{ entries: { projectPath: string }[] }>(indexPath);
+
+      // 如果没有索引文件，跳过该项目
+      if (!index) {
+        return null;
+      }
+
+      // 从索引文件中获取完整路径
+      const fullPath = index?.entries?.[0]?.projectPath;
+      if (!fullPath) {
+        return null;
+      }
+
+      const projectSessions = sessions.filter(s => s.projectPath === fullPath);
+      return {
+        projectPath: fullPath,
+        sessionCount: projectSessions.length,
+        messageCount: projectSessions.reduce((sum, s) => sum + s.messageCount, 0),
+      };
+    });
+
+    const results = await Promise.all(projectStatsPromises);
+    // 过滤掉 null 值（没有索引文件的项目）
+    const validProjectStats = results.filter(r => r !== null);
+
     const stats = {
-      totalProjects: projects.length,
+      totalProjects: validProjectStats.length,
       totalSessions: sessions.length,
       totalMessages: sessions.reduce((sum, s) => sum + s.messageCount, 0),
-      projectStats: await Promise.all(
-        projects.map(async (projectPath) => {
-          const projectSessions = await sessionService.getSessionsByProject(projectPath);
-          return {
-            projectPath,
-            sessionCount: projectSessions.length,
-            messageCount: projectSessions.reduce((sum, s) => sum + s.messageCount, 0),
-          };
-        })
-      ),
+      projectStats: validProjectStats,
     };
 
     res.json(stats);
