@@ -6,7 +6,7 @@
 
 - 查看所有 Claude Code 会话历史
 - 按项目筛选会话
-- 搜索会话内容
+- 搜索会话内容（支持关键词匹配和高亮）
 - 查看会话详情（包括所有消息）
 - 查看统计信息（项目数、会话数、消息数）
 - 完全本地运行，无需联网
@@ -26,31 +26,41 @@ pnpm install
 # 构建项目
 pnpm build
 
-# 全局安装
+# 全局安装 CLI
 pnpm install -g
-```
-
-### 使用 pkg 打包
-
-```bash
-# 打包为可执行文件
-pnpm run pkg
-
-# 生成的可执行文件位于 packages/cli/dist/
 ```
 
 ## 使用方法
 
+### CLI 命令（推荐）
+
+全局安装后，可以使用以下命令管理服务：
+
+```bash
+# 启动服务（后台运行）
+claude-session-dashboard start
+
+# 停止服务
+claude-session-dashboard stop
+
+# 查看服务状态
+claude-session-dashboard status
+
+# 重启服务
+claude-session-dashboard restart
+```
+
+服务启动后，访问 http://localhost:3000 查看应用。
+
 ### 开发模式
 
 ```bash
-# 启动后端服务
-cd packages/backend
+# 同时启动前端和后端（推荐）
 pnpm dev
 
-# 启动前端服务（新终端）
-cd packages/frontend
-pnpm dev
+# 或分别启动
+pnpm dev:backend  # 后端服务，端口 3000
+pnpm dev:frontend # 前端服务，端口 5173
 ```
 
 访问 http://localhost:5173 查看应用。
@@ -58,32 +68,21 @@ pnpm dev
 ### 生产模式
 
 ```bash
-# 构建前端
-cd packages/frontend
+# 构建项目
 pnpm build
 
-# 构建后端
-cd ../backend
-pnpm build
+# 使用 CLI 启动
+node packages/cli/dist/index.js start
 
-# 启动服务
-node dist/index.js
-```
-
-访问 http://localhost:3000 查看应用。
-
-### 使用 CLI
-
-```bash
-# 全局安装后
-claude-session-dashboard
+# 或直接启动后端
+node packages/backend/dist/index.js
 ```
 
 ## 配置
 
 ### 环境变量
 
-创建 `.env` 文件（参考 `.env.example`）：
+创建 `.env` 文件（可选）：
 
 ```bash
 PORT=3000
@@ -102,14 +101,14 @@ CLAUDE_DIR=$HOME/.claude
 ### 后端
 - Node.js + Express
 - TypeScript
-- pkg (打包为可执行文件)
+- CORS 支持
 
 ### 前端
-- Vue 3
+- Vue 3 (Composition API)
 - TypeScript
-- Element Plus
-- Pinia (状态管理)
-- Vite (构建工具)
+- Element Plus UI 组件库
+- Pinia 状态管理
+- Vite 构建工具
 
 ## 项目结构
 
@@ -125,13 +124,11 @@ claude-session-dashboard/
 │   ├── frontend/         # 前端应用
 │   │   ├── src/
 │   │   │   ├── views/    # 页面组件
-│   │   │   ├── components/ # 通用组件
 │   │   │   ├── api/      # API 客户端
 │   │   │   └── stores/   # 状态管理
 │   │   └── dist/         # 构建输出
-│   └── cli/              # CLI 入口
-│       ├── src/          # CLI 源码
-│       └── dist/         # 可执行文件
+│   └── cli/              # CLI 工具
+│       └── src/          # CLI 源码
 ├── package.json          # 根 package.json
 └── pnpm-workspace.yaml   # pnpm 工作区配置
 ```
@@ -173,6 +170,7 @@ pnpm build
 # 构建特定包
 pnpm --filter backend build
 pnpm --filter frontend build
+pnpm --filter cli build
 ```
 
 ## License
