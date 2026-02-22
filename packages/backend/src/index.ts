@@ -16,6 +16,7 @@ import path from 'path';
 import express from 'express';
 import cors from 'cors';
 import compression from 'compression';
+import { existsSync } from 'fs';
 import sessionRoutes from './routes/sessions';
 import searchRoutes from './routes/search';
 import projectRoutes from './routes/projects';
@@ -40,8 +41,8 @@ app.get('/api/health', (req, res) => {
 });
 
 // 生产环境：静态文件服务和 SPA fallback
-if (process.env.NODE_ENV !== 'development') {
-  const frontendDist = path.join(__dirname, '../../frontend/dist');
+const frontendDist = path.join(__dirname, '../../frontend/dist');
+if (existsSync(frontendDist)) {
   app.use(express.static(frontendDist));
   app.get('*', (req, res) => {
     res.sendFile(path.join(frontendDist, 'index.html'));
