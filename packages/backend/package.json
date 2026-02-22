@@ -2,10 +2,20 @@
   "name": "@claude-dashboard/backend",
   "version": "1.0.0",
   "main": "dist/index.js",
+  "pkg": {
+    "scripts": "dist/**/*.js",
+    "assets": [],
+    "targets": [
+      "node18-macos-x64",
+      "node18-linux-x64",
+      "node18-win-x64"
+    ],
+    "outputPath": "../cli/dist"
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "pkg": "pkg . --targets node18-macos-x64,node18-linux-x64,node18-win-x64 --output ../cli/dist/claude-session-dashboard"
+    "pkg": "pkg . --output ../cli/dist/claude-session-dashboard"
   },
   "dependencies": {
     "express": "^4.18.2",

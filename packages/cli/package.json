@@ -1,10 +1,19 @@
 {
-  "name": "claude-session-dashboard",
+  "name": "@claude-dashboard/cli",
   "version": "1.0.0",
+  "description": "Claude Code 本地 session dashboard CLI",
+  "license": "Apache-2.0",
   "bin": {
     "claude-session-dashboard": "./dist/index.js"
   },
   "files": [
     "dist/"
-  ]
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.6",
+    "typescript": "^5.3.3"
+  }
 }

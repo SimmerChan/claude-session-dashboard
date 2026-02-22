@@ -17,6 +17,9 @@ import express from 'express';
 import cors from 'cors';
 import compression from 'compression';
 import sessionRoutes from './routes/sessions';
+import searchRoutes from './routes/search';
+import projectRoutes from './routes/projects';
+import statsRoutes from './routes/stats';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,6 +34,9 @@ app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 // API 路由
 app.use('/api/sessions', sessionRoutes);
+app.use('/api/search', searchRoutes);
+app.use('/api/projects', projectRoutes);
+app.use('/api/stats', statsRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
