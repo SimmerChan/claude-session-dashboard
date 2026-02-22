@@ -1,0 +1,10 @@
+{
+  "name": "claude-session-dashboard",
+  "version": "1.0.0",
+  "bin": {
+    "claude-session-dashboard": "./dist/index.js"
+  },
+  "files": [
+    "dist/"
+  ]
+}

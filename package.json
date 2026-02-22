@@ -1,0 +1,17 @@
+{
+  "name": "claude-session-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Claude Code 本地 session dashboard",
+  "license": "Apache-2.0",
+  "scripts": {
+    "dev": "pnpm --filter backend dev && pnpm --filter frontend dev",
+    "build": "pnpm run build:frontend && pnpm run build:backend",
+    "build:frontend": "pnpm --filter frontend build",
+    "build:backend": "pnpm --filter backend build",
+    "pkg": "pnpm --filter backend pkg"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
