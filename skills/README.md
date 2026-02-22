@@ -1,24 +1,19 @@
 # Claude Skills
 
-此目录包含 Claude Code 技能包。
+此目录包含 Claude Code 技能包，可通过 [skills.sh](https://skills.sh) 安装。
 
-## 安装 Skill
+## 安装
 
-### 方法 1: 通过 skills.sh 安装（推荐）
+### 安装单个 Skill
 
 ```bash
-# 安装单个 skill
 npx https://skills.sh#SimmerChan/claude-session-dashboard/dashboard-toggle
-
-# 安装所有 skills
-npx https://skills.sh#SimmerChan/claude-session-dashboard
 ```
 
-### 方法 2: 手动安装
+### 安装所有 Skills
 
 ```bash
-# 复制 skill 目录到本地 skills 目录
-cp -r .claude/skills/dashboard-toggle ~/.claude/skills/
+npx https://skills.sh#SimmerChan/claude-session-dashboard
 ```
 
 ## 可用 Skills
