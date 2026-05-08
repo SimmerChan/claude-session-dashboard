@@ -16,14 +16,14 @@ import { spawn } from 'child_process';
 import { writeFile, unlink, readFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { homedir } from 'os';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 3000;
 const PID_FILE = path.join(homedir(), '.claude-dashboard.pid');
+
+// CLI runs from project root, resolve backend path relative to cwd
+const PROJECT_ROOT = process.cwd();
+const backendPath = path.join(PROJECT_ROOT, 'packages', 'backend', 'dist', 'index.js');
 
 async function start() {
   // 检查是否已经在运行
@@ -40,8 +40,6 @@ async function start() {
       await unlink(PID_FILE);
     }
   }
-
-  const backendPath = path.join(__dirname, '..', '..', 'backend', 'dist', 'index.js');
 
   // 使用 detached 模式创建守护进程
   const backend = spawn('node', [backendPath], {
