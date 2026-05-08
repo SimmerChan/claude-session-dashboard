@@ -27,7 +27,7 @@ pnpm install
 pnpm build
 
 # 全局安装 CLI
-pnpm install -g
+pnpm add -g .
 ```
 
 ## 使用方法
