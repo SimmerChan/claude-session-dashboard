@@ -26,7 +26,9 @@ pnpm install
 # 构建项目
 pnpm build
 
-# 全局安装 CLI
+# 全局安装 CLI（首次使用需先运行 pnpm setup）
+pnpm setup
+source ~/.zshrc  # 或 source ~/.bashrc
 pnpm add -g .
 ```
 
